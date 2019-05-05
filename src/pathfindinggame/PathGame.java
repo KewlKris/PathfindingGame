@@ -5,8 +5,6 @@ import pathfindinggame.objects.*;
 
 import java.awt.*;
 
-import java.time.Instant;
-
 public class PathGame {
     private static int idCounter = 0;
     public static int serveID() {
@@ -60,12 +58,14 @@ public class PathGame {
 }
 
 class TickTimer implements Runnable {
-    private final int delayMilis = 17;
     public boolean isRunning = true;
     public void run() {
         while (isRunning) {
-            long start = Instant.now().toEpochMilli();
-            while (Instant.now().toEpochMilli() - start < delayMilis);
+            try {
+                Thread.sleep(17);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             PathGame.tick(new PathTick(PathCanvas.upPressed, PathCanvas.downPressed, PathCanvas.leftPressed, PathCanvas.rightPressed));
         }
     }
