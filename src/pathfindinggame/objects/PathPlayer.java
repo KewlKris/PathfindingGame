@@ -1,6 +1,7 @@
 package pathfindinggame.objects;
 
 import java.awt.*;
+import pathfindinggame.PathGrid;
 import pathfindinggame.PathTick;
 
 public class PathPlayer extends PathObject {
@@ -23,6 +24,14 @@ public class PathPlayer extends PathObject {
         if (pt.isRightPressed()) {
             pos.x += 5;
         }
+        
+        //Adjust for collisions
+        for (int y=0; y<PathGrid.grid.length; y++) {
+            for (int x=0; x<PathGrid.grid[y].length; x++) {
+                
+            }
+        }
+        
     }
     
     public void draw(Graphics2D g) {

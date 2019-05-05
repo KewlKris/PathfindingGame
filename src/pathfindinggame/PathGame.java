@@ -50,6 +50,13 @@ public class PathGame {
     
     private static PathScene initMainMenu() {
         PathScene scene = new PathScene();
+        
+        for (int y=0; y<PathGrid.grid.length; y++) {
+            for (int x=0; x<PathGrid.grid[y].length; x++) {
+                if (PathGrid.grid[y][x]) scene.addObject(new PathWall(new Point(x, y)));
+            }
+        }
+        
         scene.addObject(new PathPlayer());
         return scene;
     }
