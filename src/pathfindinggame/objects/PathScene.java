@@ -3,6 +3,8 @@ package pathfindinggame.objects;
 import java.util.ArrayList;
 import java.awt.Graphics2D;
 
+import pathfindinggame.PathTick;
+
 public class PathScene extends PathObject {
     private ArrayList<PathObject> sceneObjects;
     
@@ -22,9 +24,9 @@ public class PathScene extends PathObject {
     }
     
     @Override
-    public void tick() {
+    public void tick(PathTick pt) {
         for (PathObject o : sceneObjects) {
-            o.tick();
+            o.tick(pt);
         }
     }
     

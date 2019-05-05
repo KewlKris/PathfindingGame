@@ -1,7 +1,10 @@
 package pathfindinggame;
 
 public class PathfindingGame {
+    public static PathFrame frame;
+    
     public static void main(String[] args) {
-        PathFrame f = new PathFrame();
+        frame = new PathFrame();
+        PathGame.startGame();
     }
 }
