@@ -15,6 +15,7 @@ public class PathCanvas extends Canvas {
     private Graphics2D buf;
     public PathCanvas() {
         this.addKeyListener(new KeyboardPressListener());
+        this.setBackground(Color.BLACK);
     }
     
     public void update(Graphics g) {
@@ -33,7 +34,19 @@ public class PathCanvas extends Canvas {
         buf.fillRect(0, 0, PathSettings.GAME_RESOLUTION.width, PathSettings.GAME_RESOLUTION.height);
         PathGame.draw(buf);
         
+        int wDif = this.getWidth() - PathSettings.GAME_RESOLUTION.width;
+        int hDif = this.getHeight() - PathSettings.GAME_RESOLUTION.height;
+        
+        double scale;
+        if (wDif < hDif) {
+            scale = (double)this.getWidth() / (double)PathSettings.GAME_RESOLUTION.width;
+        } else {
+            scale = (double)this.getHeight() / (double)PathSettings.GAME_RESOLUTION.height;
+        }
+        
+        //graph.scale(scale, scale);
         graph.drawImage(frameBuffer, 0, 0, this);
+        //graph.drawImage(frameBuffer, (this.getWidth()-PathSettings.GAME_RESOLUTION.width)/2, 0, this);
     }
     
     private class KeyboardPressListener implements KeyListener {

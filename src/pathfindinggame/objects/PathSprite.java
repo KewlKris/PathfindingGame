@@ -13,22 +13,22 @@ public class PathSprite extends PathObject {
     
     public void tick(PathTick pt) {
         if (pt.isUpPressed()) {
-            pos.y -= 1;
+            pos.y -= 5;
         }
         if (pt.isDownPressed()) {
-            pos.y += 1;
+            pos.y += 5;
         }
         if (pt.isLeftPressed()) {
-            pos.x -= 1;
+            pos.x -= 5;
         }
         if (pt.isRightPressed()) {
-            pos.x += 1;
+            pos.x += 5;
         }
     }
     
     public void draw(Graphics2D g) {
         g.setColor(Color.BLUE);
-        g.fillRect(0+pos.x, 0+pos.y, 100, 100);
+        g.fillRect(0+pos.x, 0+pos.y, 48, 48);
     }
     
     public void remove() {

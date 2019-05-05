@@ -7,7 +7,7 @@ public class PathFrame extends Frame {
     public PathCanvas canvas;
     public PathFrame() {
         this.setTitle("Pathfinding Game");
-        this.setSize(1280, 720);
+        this.setSize(PathSettings.GAME_RESOLUTION.width, PathSettings.GAME_RESOLUTION.height);
         
         canvas = new PathCanvas();
         this.add(canvas);
