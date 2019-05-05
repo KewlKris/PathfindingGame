@@ -50,7 +50,7 @@ public class PathGame {
     
     private static PathScene initMainMenu() {
         PathScene scene = new PathScene();
-        scene.addObject(new PathSprite());
+        scene.addObject(new PathPlayer());
         return scene;
     }
     

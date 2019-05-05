@@ -3,8 +3,7 @@ package pathfindinggame.objects;
 import java.awt.*;
 import pathfindinggame.PathTick;
 
-public class PathSprite extends PathObject {
-    
+public class PathPlayer extends PathObject {
     private Point pos;
     
     public void init() {
@@ -27,8 +26,8 @@ public class PathSprite extends PathObject {
     }
     
     public void draw(Graphics2D g) {
-        g.setColor(Color.BLUE);
-        g.fillRect(0+pos.x, 0+pos.y, 48, 48);
+        g.setColor(Color.RED);
+        g.fillRect(pos.x, pos.y, 48, 48);
     }
     
     public void remove() {
