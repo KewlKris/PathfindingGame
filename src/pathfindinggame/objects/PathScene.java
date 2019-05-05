@@ -1,19 +1,25 @@
 package pathfindinggame.objects;
 
 import java.util.ArrayList;
-import java.awt.Graphics2D;
+import java.awt.*;
 
 import pathfindinggame.PathTick;
 
 public class PathScene extends PathObject {
     private ArrayList<PathObject> sceneObjects;
+    private Dimension viewSize;
     
-    public PathScene() {
+    public PathScene(Dimension view) {
         super();
         sceneObjects = new ArrayList<PathObject>();
+        viewSize = view;
     }
     public void addObject(PathObject o) {
         sceneObjects.add(o);
+    }
+    
+    public Dimension getDimension() {
+        return viewSize;
     }
     
     @Override

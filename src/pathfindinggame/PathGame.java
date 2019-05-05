@@ -16,7 +16,12 @@ public class PathGame {
         scenes[sceneID].init();
     }
     
+    public static Dimension getSceneDimension() {
+        return scenes[sceneID].getDimension();
+    }
+    
     public static void startGame() {
+        PathGrid.fillGrids();
         initializeScenes();
         changeScene(MAIN_MENU);
         startTicks();
@@ -43,17 +48,17 @@ public class PathGame {
     
     private static PathScene[] scenes;
     private static int sceneID;
-    private static final int MAIN_MENU = 0;
+    public static final int MAIN_MENU = 0;
     private static void initializeScenes() {
         scenes = new PathScene[] {initMainMenu()};
     }
     
     private static PathScene initMainMenu() {
-        PathScene scene = new PathScene();
+        PathScene scene = new PathScene(new Dimension(PathGrid.GRID_1[0].length, PathGrid.GRID_1.length));
         
-        for (int y=0; y<PathGrid.grid.length; y++) {
-            for (int x=0; x<PathGrid.grid[y].length; x++) {
-                if (PathGrid.grid[y][x]) scene.addObject(new PathWall(new Point(x, y)));
+        for (int y=0; y<PathGrid.GRID_1.length; y++) {
+            for (int x=0; x<PathGrid.GRID_1[y].length; x++) {
+                if (PathGrid.GRID_1[y][x]) scene.addObject(new PathWall(new Point(x, y)));
             }
         }
         

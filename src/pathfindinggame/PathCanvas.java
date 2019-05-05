@@ -32,7 +32,17 @@ public class PathCanvas extends Canvas {
         
         buf.setColor(Color.LIGHT_GRAY);
         buf.fillRect(0, 0, PathSettings.GAME_RESOLUTION.width, PathSettings.GAME_RESOLUTION.height);
-        PathGame.draw(buf);
+        
+        Dimension sceneDim = PathGame.getSceneDimension();
+        Image sceneBuffer = createImage(sceneDim.width*PathGrid.blockSize, sceneDim.height*PathGrid.blockSize);
+        Graphics2D sceneGraph = (Graphics2D)sceneBuffer.getGraphics();
+        
+        sceneGraph.setColor(Color.LIGHT_GRAY);
+        sceneGraph.fillRect(0, 0, sceneDim.width*PathGrid.blockSize, sceneDim.height*PathGrid.blockSize);
+        
+        PathGame.draw(sceneGraph);
+        
+        buf.drawImage(sceneBuffer, PathGrid.viewOffset.x, PathGrid.viewOffset.y, this);
         
         int wDif = this.getWidth() - PathSettings.GAME_RESOLUTION.width;
         int hDif = this.getHeight() - PathSettings.GAME_RESOLUTION.height;

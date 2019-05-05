@@ -24,43 +24,43 @@ public class PathPlayer extends PathObject {
     
     public void tick(PathTick pt) {
         if (pt.isUpPressed()) {
-            if (pos.y <= PathSettings.GAME_RESOLUTION.height/10) {
+            if (pos.y+PathGrid.viewOffset.y <= PathSettings.GAME_RESOLUTION.height/3) {
                 PathGrid.viewOffset.y += speed;
             } else {
-                pos.y -= speed;
             }
+            pos.y -= speed;
         }
         if (pt.isDownPressed()) {
-            if (pos.y >= PathSettings.GAME_RESOLUTION.height - PathSettings.GAME_RESOLUTION.height/10) {
+            if (pos.y+PathGrid.viewOffset.y >= PathSettings.GAME_RESOLUTION.height - PathSettings.GAME_RESOLUTION.height/3) {
                 PathGrid.viewOffset.y -= speed;
             } else {
-                pos.y += speed;
             }
+            pos.y += speed;
         }
         if (pt.isLeftPressed()) {
-            if (pos.x <= PathSettings.GAME_RESOLUTION.width/10) {
+            if (pos.x+PathGrid.viewOffset.x <= PathSettings.GAME_RESOLUTION.width/4) {
                 PathGrid.viewOffset.x += speed;
             } else {
-                pos.x -= speed;
             }
+            pos.x -= speed;
         }
         if (pt.isRightPressed()) {
-            if (pos.x >= PathSettings.GAME_RESOLUTION.width - PathSettings.GAME_RESOLUTION.width/10) {
+            if (pos.x+PathGrid.viewOffset.x >= PathSettings.GAME_RESOLUTION.width - PathSettings.GAME_RESOLUTION.width/4) {
                 PathGrid.viewOffset.x -= speed;
             } else {
-                pos.x += speed;
             }
+            pos.x += speed;
         }
         
         //Adjust for collisions
-        boolean[][] grid = PathGrid.grid;
+        boolean[][] grid = PathGrid.GRID_1;
         for (int y=0; y<grid.length; y++) {
             for (int x=0; x<grid[y].length; x++) {
                 if (grid[y][x]) {
-                    int bStartX = x * PathGrid.blockSize + PathGrid.viewOffset.x;
-                    int bEndX = x * PathGrid.blockSize + PathGrid.blockSize + PathGrid.viewOffset.x;
-                    int bStartY = y * PathGrid.blockSize + PathGrid.viewOffset.y;
-                    int bEndY = y * PathGrid.blockSize + PathGrid.blockSize + PathGrid.viewOffset.y;
+                    int bStartX = x * PathGrid.blockSize;
+                    int bEndX = x * PathGrid.blockSize + PathGrid.blockSize;
+                    int bStartY = y * PathGrid.blockSize;
+                    int bEndY = y * PathGrid.blockSize + PathGrid.blockSize;
 
                     int pStartX = pos.x;
                     int pEndX = pos.x + PathGrid.blockSize;
