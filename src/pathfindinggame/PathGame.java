@@ -57,7 +57,7 @@ public class PathGame {
             }
         }
         
-        scene.addObject(new PathPlayer());
+        scene.addObject(new PathPlayer(new Point(5, 5)));
         return scene;
     }
     

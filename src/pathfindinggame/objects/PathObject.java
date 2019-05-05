@@ -5,7 +5,7 @@ import pathfindinggame.PathGame;
 import pathfindinggame.PathTick;
 
 public abstract class PathObject {
-    private int id;
+    protected int id;
     PathObject() {
         id = PathGame.serveID();
     }
