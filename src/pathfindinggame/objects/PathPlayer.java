@@ -97,7 +97,7 @@ public class PathPlayer extends PathObject {
     }
     
     public void draw(Graphics2D g) {
-        g.setColor(Color.RED);
+        g.setColor(Color.BLUE);
         g.fillRect(pos.x, pos.y, PathGrid.blockSize, PathGrid.blockSize);
     }
     
