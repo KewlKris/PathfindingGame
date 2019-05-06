@@ -9,8 +9,10 @@ import pathfindinggame.PathTick;
 public class PathTargeter extends PathObject {
     private Point target;
     private PathHunter hunter;
+    private PathPlayer player;
     
-    public PathTargeter(PathHunter ph) {
+    public PathTargeter(PathPlayer pl, PathHunter ph) {
+        player = pl;
         hunter = ph;
     }
     
@@ -19,12 +21,29 @@ public class PathTargeter extends PathObject {
     }
     
     public void tick(PathTick pt) {
+        Point playerPos = player.getPos();
+        target = new Point((int)(Math.round(playerPos.x / PathGrid.blockSize)), (int)(Math.round(playerPos.y / PathGrid.blockSize)));
         hunter.setTarget(target);
+        performAStar();
     }
     
     private ArrayList<TraceStep> openList = new ArrayList<TraceStep>();
     private ArrayList<TraceStep> closedList = new ArrayList<TraceStep>();
+    int pathUpdateDelay = 60;
+    int count = 0;
     private void performAStar() {
+        if (count != pathUpdateDelay) {
+            count++;
+            return;
+        }
+        count = 0;
+        
+        
+        openList = new ArrayList<TraceStep>();
+        closedList = new ArrayList<TraceStep>();
+        if (target == null) {
+            return;
+        }
         
         Point hunterPos = hunter.getPos();
         int hunterBlockX = (int)(Math.round(hunterPos.x / PathGrid.blockSize));
@@ -45,15 +64,65 @@ public class PathTargeter extends PathObject {
             }
             
             lowestF = openList.remove(lowestIndex);
-            TraceStep[] successors = new TraceStep[4];
+            ArrayList<TraceStep> successors = new ArrayList<TraceStep>();
             
             boolean[][] grid = PathGrid.GRID_1;
             if (!grid[lowestF.y-1][lowestF.x]) { //If empty
-                
                 TraceStep suc = new TraceStep(lowestF, lowestF.g + 1, findH(lowestF.x, lowestF.y - 1), lowestF.x, lowestF.y - 1);
+                successors.add(suc);
+            }
+            if (!grid[lowestF.y+1][lowestF.x]) { //If empty
+                TraceStep suc = new TraceStep(lowestF, lowestF.g + 1, findH(lowestF.x, lowestF.y + 1), lowestF.x, lowestF.y + 1);
+                successors.add(suc);
+            }
+            if (!grid[lowestF.y][lowestF.x-1]) { //If empty
+                TraceStep suc = new TraceStep(lowestF, lowestF.g + 1, findH(lowestF.x - 1, lowestF.y), lowestF.x - 1, lowestF.y);
+                successors.add(suc);
+            }
+            if (!grid[lowestF.y][lowestF.x+1]) { //If empty
+                TraceStep suc = new TraceStep(lowestF, lowestF.g + 1, findH(lowestF.x + 1, lowestF.y), lowestF.x + 1, lowestF.y);
+                successors.add(suc);
             }
             
+            boolean targetFound = false;
+            for (TraceStep suc : successors) {
+                if (target.x == suc.x && target.y == suc.y) {
+                    //End search? Target found
+                    targetFound = true;
+                    break;
+                }
+                //Search open list for same pos lower f
+                int thisF = suc .f;
+                boolean skip = false;
+                for (TraceStep ts : openList) {
+                    if (ts.f < thisF && ts.x == suc.x && ts.y == suc.y) {
+                        skip = true;
+                    }
+                }
+                if (skip) {
+                    continue;
+                }
+                
+                //Search closed list for same pos lower f
+                thisF = suc.f;
+                skip = false;
+                for (TraceStep ts : closedList) {
+                    if (ts.f < thisF && ts.x == suc.x && ts.y == suc.y) {
+                        skip = true;
+                    }
+                }
+                if (skip) {
+                    continue;
+                }
+                
+                openList.add(suc);
+            }
+            closedList.add(lowestF);
+            if (targetFound) {
+                break;
+            }
         }
+        System.out.println(closedList.size());
         
     }
     
@@ -69,6 +138,12 @@ public class PathTargeter extends PathObject {
             g.setColor(Color.YELLOW);
             Point blockPos = PathGrid.toCoord(target.x, target.y);
             g.drawRect(blockPos.x + PathGrid.blockSize/4, blockPos.y + PathGrid.blockSize/4, PathGrid.blockSize/2, PathGrid.blockSize/2);
+            
+            for (TraceStep ts : closedList) {
+                g.setColor(Color.GREEN);
+                g.drawRect(ts.x*PathGrid.blockSize + PathGrid.blockSize/4, ts.y*PathGrid.blockSize + PathGrid.blockSize/4, PathGrid.blockSize/2, PathGrid.blockSize/2);
+                g.drawString(String.format("%d", ts.f), ts.x*PathGrid.blockSize, ts.y*PathGrid.blockSize);
+            }
         }
     }
     
@@ -93,6 +168,10 @@ class TraceStep {
         parent = p;
         this.x = x;
         this.y = y;
+    }
+    
+    public String toString() {
+        return String.format("(%d, %d)", x, y);
     }
     
     

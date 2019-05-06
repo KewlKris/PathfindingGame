@@ -10,6 +10,10 @@ public class PathPlayer extends PathObject {
     private Point startPos;
     private int speed = 5;
     
+    public Point getPos() {
+        return pos;
+    }
+    
     /**
      * Takes the position of the player as a PathPoint
      * @param pos 

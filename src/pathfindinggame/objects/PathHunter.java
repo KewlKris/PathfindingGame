@@ -8,7 +8,7 @@ import pathfindinggame.PathTick;
 public class PathHunter extends PathObject {
     private Point pos;
     private Point startPos;
-    private int speed = 2;
+    private int speed = 0;
     private Point targetPos;
     private boolean atTarget;
     

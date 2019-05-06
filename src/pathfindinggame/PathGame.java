@@ -67,7 +67,7 @@ public class PathGame {
         
         scene.addObject(player);
         scene.addObject(hunter);
-        scene.addObject(new PathTargeter(hunter));
+        scene.addObject(new PathTargeter(player, hunter));
         return scene;
     }
     
