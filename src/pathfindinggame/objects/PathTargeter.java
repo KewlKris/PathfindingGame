@@ -30,7 +30,7 @@ public class PathTargeter extends PathObject {
     
     private ArrayList<TraceStep> openList = new ArrayList<TraceStep>();
     private ArrayList<TraceStep> closedList = new ArrayList<TraceStep>();
-    int pathUpdateDelay = 60;
+    int pathUpdateDelay = 1;
     int count = 0;
     private void performAStar() {
         if (count != pathUpdateDelay) {
