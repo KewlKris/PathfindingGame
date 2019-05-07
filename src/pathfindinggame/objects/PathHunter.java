@@ -4,16 +4,18 @@ import java.awt.*;
 import pathfindinggame.PathGrid;
 import pathfindinggame.PathSettings;
 import pathfindinggame.PathTick;
+import pathfindinggame.objects.PathTargeter;
 
 public class PathHunter extends PathObject {
     private Point pos;
     private Point startPos;
-    private int speed = 0;
+    private int speed = 2;
     private Point targetPos;
-    private boolean atTarget;
+    private HunterPath path;
     
-    public boolean atTarget() {
-        return atTarget;
+    
+    public void setPath(HunterPath hp) {
+        path = hp;
     }
     
     public void setTarget(Point tPos) {
@@ -39,23 +41,29 @@ public class PathHunter extends PathObject {
     
     public void tick(PathTick pt) {
         if (pos.equals(targetPos)) {
-            atTarget = true;
-        } else {
-            atTarget = false;
-            
-            if (targetPos.x > pos.x) {
-                pos.x += speed;
+            Point t;
+            try {
+                t = path.popPoint();
+            } catch (NullPointerException e) {
+                return;
             }
-            if (targetPos.x < pos.x) {
-                pos.x -= speed;
+            if (t == null) {
+                return;
             }
-            if (targetPos.y > pos.y) {
-                pos.y += speed;
-            }
-            if (targetPos.y < pos.y) {
-                pos.y -= speed;
-            }
-            
+            targetPos = new Point(t.x * PathGrid.blockSize, t.y * PathGrid.blockSize);
+        }
+        
+        if (targetPos.x > pos.x) {
+            pos.x += speed;
+        }
+        if (targetPos.x < pos.x) {
+            pos.x -= speed;
+        }
+        if (targetPos.y > pos.y) {
+            pos.y += speed;
+        }
+        if (targetPos.y < pos.y) {
+            pos.y -= speed;
         }
     }
     
@@ -65,7 +73,7 @@ public class PathHunter extends PathObject {
         
         if (PathSettings.DEBUG_ENABLED) {
             g.setColor(Color.RED);
-            g.drawString("" + atTarget, pos.x, pos.y);
+            g.drawString(targetPos.toString(), pos.x, pos.y);
         }
     }
     

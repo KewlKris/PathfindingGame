@@ -10,6 +10,7 @@ public class PathTargeter extends PathObject {
     private Point target;
     private PathHunter hunter;
     private PathPlayer player;
+    private TraceStep destNode;
     
     public PathTargeter(PathPlayer pl, PathHunter ph) {
         player = pl;
@@ -22,8 +23,8 @@ public class PathTargeter extends PathObject {
     
     public void tick(PathTick pt) {
         Point playerPos = player.getPos();
-        target = new Point((int)(Math.round(playerPos.x / PathGrid.blockSize)), (int)(Math.round(playerPos.y / PathGrid.blockSize)));
-        hunter.setTarget(target);
+        target = new Point((int)(Math.round((playerPos.x + PathGrid.blockSize/2) / PathGrid.blockSize)), (int)(Math.round((playerPos.y + PathGrid.blockSize/2) / PathGrid.blockSize)));
+        //hunter.setTarget(target);
         performAStar();
     }
     
@@ -48,6 +49,10 @@ public class PathTargeter extends PathObject {
         Point hunterPos = hunter.getPos();
         int hunterBlockX = (int)(Math.round(hunterPos.x / PathGrid.blockSize));
         int hunterBlockY = (int)(Math.round(hunterPos.y / PathGrid.blockSize));
+        
+        if (target.x == hunterBlockX && target.y == hunterBlockY) {
+            return;
+        }
         
         TraceStep startNode = new TraceStep(null, 0, 0, hunterBlockX, hunterBlockY);
         openList.add(startNode);
@@ -89,6 +94,7 @@ public class PathTargeter extends PathObject {
                 if (target.x == suc.x && target.y == suc.y) {
                     //End search? Target found
                     targetFound = true;
+                    destNode = suc;
                     break;
                 }
                 //Search open list for same pos lower f
@@ -122,7 +128,8 @@ public class PathTargeter extends PathObject {
                 break;
             }
         }
-        System.out.println(closedList.size());
+        //System.out.println(closedList.size());
+        hunter.setPath(new HunterPath(destNode));
         
     }
     
@@ -135,16 +142,23 @@ public class PathTargeter extends PathObject {
     
     public void draw(Graphics2D g) {
         if (PathSettings.DEBUG_ENABLED) {
-            g.setColor(Color.YELLOW);
-            Point blockPos = PathGrid.toCoord(target.x, target.y);
-            g.drawRect(blockPos.x + PathGrid.blockSize/4, blockPos.y + PathGrid.blockSize/4, PathGrid.blockSize/2, PathGrid.blockSize/2);
-            
-            for (TraceStep ts : closedList) {
-                g.setColor(Color.GREEN);
-                g.drawRect(ts.x*PathGrid.blockSize + PathGrid.blockSize/4, ts.y*PathGrid.blockSize + PathGrid.blockSize/4, PathGrid.blockSize/2, PathGrid.blockSize/2);
-                g.drawString(String.format("%d", ts.f), ts.x*PathGrid.blockSize, ts.y*PathGrid.blockSize);
+            try {
+                TraceStep step = destNode;
+                while (step.parent != null) {
+                    colorBlock(g, step.x, step.y, Color.GREEN);
+                    g.drawString(String.format("%d", step.f), step.x*PathGrid.blockSize, step.y*PathGrid.blockSize);
+                    step = step.parent;
+                }
+            } catch (NullPointerException e) {
+                
             }
+            colorBlock(g, target.x, target.y, Color.YELLOW);
         }
+    }
+    
+    private static void colorBlock(Graphics2D g, int x, int y, Color c) {
+        g.setColor(c);
+        g.drawRect(x*PathGrid.blockSize + PathGrid.blockSize/4, y*PathGrid.blockSize + PathGrid.blockSize/4, PathGrid.blockSize/2, PathGrid.blockSize/2);
     }
     
     public void remove() {
@@ -152,7 +166,7 @@ public class PathTargeter extends PathObject {
     }
 }
 
-class TraceStep {
+class TraceStep implements Comparable {
     int f; //Total cost
     int g; //Path length
     int h; //Distance to goal
@@ -170,9 +184,44 @@ class TraceStep {
         this.y = y;
     }
     
+    public int compareTo(Object o) {
+        TraceStep ts = (TraceStep)o;
+        return f - ts.f;
+    }
+    
     public String toString() {
         return String.format("(%d, %d)", x, y);
     }
+}
+
+class HunterPath {
+    private ArrayList<Point> path;
+    public HunterPath(TraceStep destNode) {
+        path = new ArrayList<Point>();
+        try {
+            TraceStep step = destNode;
+            while (step.parent != null) {
+                path.add(0, new Point(step.x, step.y));
+                step = step.parent;
+            }
+            //path.add(0, new Point(step.x, step.y));
+        } catch (NullPointerException e) {
+            path = null;
+        }
+    }
     
+    public Point currentPoint() {
+        return path.get(0);
+    }
     
+    public Point popPoint() {
+        if (path.size() == 0) {
+            return null;
+        }
+        return path.remove(0);
+    }
+    
+    public String toString() {
+        return path.toString();
+    }
 }
