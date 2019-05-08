@@ -2,6 +2,7 @@ package pathfindinggame.objects;
 
 import java.util.ArrayList;
 import java.awt.*;
+import java.util.Comparator;
 import pathfindinggame.PathGrid;
 import pathfindinggame.PathSettings;
 import pathfindinggame.PathTick;
@@ -11,6 +12,8 @@ public class PathTargeter extends PathObject {
     private PathHunter hunter;
     private PathPlayer player;
     private TraceStep destNode;
+    
+    private boolean pathIsComplete;
     
     public PathTargeter(PathPlayer pl, PathHunter ph) {
         player = pl;
@@ -28,10 +31,11 @@ public class PathTargeter extends PathObject {
         performAStar();
     }
     
-    private ArrayList<TraceStep> openList = new ArrayList<TraceStep>();
-    private ArrayList<TraceStep> closedList = new ArrayList<TraceStep>();
+    private ArrayList<TraceStep> openList;
+    private ArrayList<TraceStep> closedList;
     int pathUpdateDelay = 1;
     int count = 0;
+    private final int PATH_LIMIT = 200;
     private void performAStar() {
         if (count != pathUpdateDelay) {
             count++;
@@ -59,6 +63,13 @@ public class PathTargeter extends PathObject {
         //TraceStep nextNode = nextStep(startNode);
         
         while (openList.size() > 0) {
+            if (openList.size() > PATH_LIMIT) {
+                //Limit reached! Take best path...
+                bailSearch();
+                break;
+            }
+            openList.sort(Comparator.naturalOrder());
+            /*
             TraceStep lowestF = openList.get(0);
             int lowestIndex = 0;
             for (int x=1; x<openList.size(); x++) {
@@ -67,8 +78,10 @@ public class PathTargeter extends PathObject {
                     lowestIndex = x;
                 }
             }
+            */
             
-            lowestF = openList.remove(lowestIndex);
+            //lowestF = openList.remove(lowestIndex);
+            TraceStep lowestF = openList.remove(0);
             ArrayList<TraceStep> successors = new ArrayList<TraceStep>();
             
             boolean[][] grid = PathGrid.GRID_1;
@@ -95,6 +108,7 @@ public class PathTargeter extends PathObject {
                     //End search? Target found
                     targetFound = true;
                     destNode = suc;
+                    pathIsComplete = true;
                     break;
                 }
                 //Search open list for same pos lower f
@@ -130,7 +144,24 @@ public class PathTargeter extends PathObject {
         }
         //System.out.println(closedList.size());
         hunter.setPath(new HunterPath(destNode));
+    }
+    
+    /**
+     * Finds the currently best scoring node and updates destNode
+     */
+    private void bailSearch() {
+        TraceStep bestStep = openList.get(0);
+        int lowestValue = bestStep.f;
         
+        for (TraceStep ts : openList) {
+            if (ts.compareTo(bestStep) < 0) {
+                bestStep = ts;
+                lowestValue = ts.f;
+            }
+        }
+        
+        destNode = bestStep;
+        pathIsComplete = false;
     }
     
     private int findH(int x, int y) {
@@ -144,8 +175,14 @@ public class PathTargeter extends PathObject {
         if (PathSettings.DEBUG_ENABLED) {
             try {
                 TraceStep step = destNode;
+                Color c;
+                if (pathIsComplete) {
+                    c = Color.GREEN;
+                } else {
+                    c = new Color(100, 0, 0);
+                }
                 while (step.parent != null) {
-                    colorBlock(g, step.x, step.y, Color.GREEN);
+                    colorBlock(g, step.x, step.y, c);
                     g.drawString(String.format("%d", step.f), step.x*PathGrid.blockSize, step.y*PathGrid.blockSize);
                     step = step.parent;
                 }
