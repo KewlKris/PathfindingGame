@@ -7,7 +7,7 @@ import pathfindinggame.PathGrid;
 import pathfindinggame.PathSettings;
 import pathfindinggame.PathTick;
 
-public class PathTargeter extends PathObject {
+public class PathTargeter extends PathObject implements Runnable {
     private Point target;
     private PathHunter hunter;
     private PathPlayer player;
@@ -22,26 +22,37 @@ public class PathTargeter extends PathObject {
     
     public void init() {
         target = new Point(15, 15);
+        isBusy = false;
     }
     
     public void tick(PathTick pt) {
         Point playerPos = player.getPos();
         target = new Point((int)(Math.round((playerPos.x + PathGrid.blockSize/2) / PathGrid.blockSize)), (int)(Math.round((playerPos.y + PathGrid.blockSize/2) / PathGrid.blockSize)));
         //hunter.setTarget(target);
-        performAStar();
+        Thread t = new Thread(this);
+        t.start();
     }
     
-    private ArrayList<TraceStep> openList;
-    private ArrayList<TraceStep> closedList;
     int pathUpdateDelay = 1;
     int count = 0;
-    private final int PATH_LIMIT = 200;
-    private void performAStar() {
+    public void run() {
         if (count != pathUpdateDelay) {
             count++;
             return;
         }
         count = 0;
+        if (isBusy) {
+            return;
+        }
+        performAStar();
+    }
+    
+    private ArrayList<TraceStep> openList;
+    private ArrayList<TraceStep> closedList;
+    private final int PATH_LIMIT = 500;
+    private boolean isBusy;
+    private void performAStar() {
+        isBusy = true;
         
         
         openList = new ArrayList<TraceStep>();
@@ -51,10 +62,12 @@ public class PathTargeter extends PathObject {
         }
         
         Point hunterPos = hunter.getPos();
+        Point threadTarget = (Point)target.clone();
         int hunterBlockX = (int)(Math.round(hunterPos.x / PathGrid.blockSize));
         int hunterBlockY = (int)(Math.round(hunterPos.y / PathGrid.blockSize));
         
-        if (target.x == hunterBlockX && target.y == hunterBlockY) {
+        if (threadTarget.x == hunterBlockX && threadTarget.y == hunterBlockY) {
+            isBusy = false;
             return;
         }
         
@@ -104,7 +117,7 @@ public class PathTargeter extends PathObject {
             
             boolean targetFound = false;
             for (TraceStep suc : successors) {
-                if (target.x == suc.x && target.y == suc.y) {
+                if (threadTarget.x == suc.x && threadTarget.y == suc.y) {
                     //End search? Target found
                     targetFound = true;
                     destNode = suc;
@@ -112,7 +125,7 @@ public class PathTargeter extends PathObject {
                     break;
                 }
                 //Search open list for same pos lower f
-                int thisF = suc .f;
+                int thisF = suc.f;
                 boolean skip = false;
                 for (TraceStep ts : openList) {
                     if (ts.f < thisF && ts.x == suc.x && ts.y == suc.y) {
@@ -144,6 +157,7 @@ public class PathTargeter extends PathObject {
         }
         //System.out.println(closedList.size());
         hunter.setPath(new HunterPath(destNode));
+        isBusy = false;
     }
     
     /**
@@ -162,6 +176,7 @@ public class PathTargeter extends PathObject {
         
         destNode = bestStep;
         pathIsComplete = false;
+        isBusy = false;
     }
     
     private int findH(int x, int y) {
