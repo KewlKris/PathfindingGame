@@ -2,6 +2,7 @@ package pathfindinggame.objects;
 
 import java.util.ArrayList;
 import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
 import java.util.Comparator;
 import pathfindinggame.PathGrid;
 import pathfindinggame.PathSettings;
@@ -21,16 +22,73 @@ public class PathTargeter extends PathObject implements Runnable {
     }
     
     public void init() {
-        target = new Point(15, 15);
+        Point hunterPos = hunter.getPos();
+        target = new Point(hunterPos.x/PathGrid.blockSize, hunterPos.y/PathGrid.blockSize);
         isBusy = false;
     }
     
     public void tick(PathTick pt) {
         Point playerPos = player.getPos();
-        target = new Point((int)(Math.round((playerPos.x + PathGrid.blockSize/2) / PathGrid.blockSize)), (int)(Math.round((playerPos.y + PathGrid.blockSize/2) / PathGrid.blockSize)));
+        //target = new Point((int)(Math.round((playerPos.x + PathGrid.blockSize/2) / PathGrid.blockSize)), (int)(Math.round((playerPos.y + PathGrid.blockSize/2) / PathGrid.blockSize)));
         //hunter.setTarget(target);
+        hunter.setRunning(player.getSearchRadius() < 200);
+        assignTarget();
         Thread t = new Thread(this);
         t.start();
+    }
+    
+    int targetUpdateDelay = 300;
+    int targetCount = 0;
+    private void assignTarget() {
+        //Testing only
+        if (false) {
+            Point playerPos = player.getPos();
+            target = new Point((int)(Math.round((playerPos.x + PathGrid.blockSize/2) / PathGrid.blockSize)), (int)(Math.round((playerPos.y + PathGrid.blockSize/2) / PathGrid.blockSize)));
+            return;
+        }
+        //Testing only
+        
+        Point playerPos = player.getPos();
+        int posX = playerPos.x + PathGrid.blockSize/2;
+        int posY = playerPos.y + PathGrid.blockSize/2;
+        
+        double searchRadius = player.getSearchRadius();
+        //Determine if target is outside of radius
+        int targetX = target.x * PathGrid.blockSize + PathGrid.blockSize/2;
+        int targetY = target.y * PathGrid.blockSize + PathGrid.blockSize/2;
+        if (Math.sqrt(Math.pow(Math.abs(posX-targetX), 2) + Math.pow(Math.abs(posY-targetY), 2)) > searchRadius) {
+            targetCount = targetUpdateDelay;
+        }
+        
+        
+        if (targetCount != targetUpdateDelay) {
+            targetCount++;
+            return;
+        }
+        targetCount = 0;
+        
+        
+        int blockX, blockY;
+        while (true) {
+            int angle = (int)(Math.random() * 360);
+            int distance = (int)(Math.random() * searchRadius+1);
+            double dispX = Math.cos(angle) * (double)distance;
+            double dispY = Math.sin(angle) * (double)distance;
+
+            
+            try {
+                blockX = ((int)(Math.round(posX + dispX))) / PathGrid.blockSize;
+                blockY = ((int)(Math.round(posY + dispY))) / PathGrid.blockSize;
+                
+                if (PathGrid.GRID_1[blockY][blockX]) {
+                    continue;
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                continue;
+            }
+            break;
+        }
+        target = new Point(blockX, blockY);
     }
     
     int pathUpdateDelay = 1;
@@ -205,12 +263,27 @@ public class PathTargeter extends PathObject implements Runnable {
                 
             }
             colorBlock(g, target.x, target.y, Color.YELLOW);
+            g.setColor(Color.BLUE);
+            
+            //Draw searching radius
+            double searchRadius = player.getSearchRadius();
+            Point playerPos = player.getPos();
+            g.drawOval((playerPos.x+PathGrid.blockSize/2)-(int)searchRadius, (playerPos.y+PathGrid.blockSize/2)-(int)searchRadius, (int)searchRadius*2, (int)searchRadius*2);
         }
     }
     
     private static void colorBlock(Graphics2D g, int x, int y, Color c) {
         g.setColor(c);
         g.drawRect(x*PathGrid.blockSize + PathGrid.blockSize/4, y*PathGrid.blockSize + PathGrid.blockSize/4, PathGrid.blockSize/2, PathGrid.blockSize/2);
+    }
+    
+    public void drawGUI(Graphics2D g) {
+        double alertLevel = player.getSearchRadius() / (double)player.MAX_RADIUS;
+        Stroke stroke = new BasicStroke(2.0f);
+        g.setStroke(stroke);
+        g.setColor(new Color((int)((Math.abs(alertLevel-1)*255)), 0, 0));
+        g.draw(new RoundRectangle2D.Double(20, 20, 200, 40, 10, 10));
+        g.fill(new RoundRectangle2D.Double(20, 20, (int)(Math.abs(alertLevel-1)*200), 40, 10, 10));
     }
     
     public void remove() {

@@ -9,9 +9,10 @@ import pathfindinggame.objects.PathTargeter;
 public class PathHunter extends PathObject {
     private Point pos;
     private Point startPos;
-    private int speed = 2;
+    private int speed;
     private Point targetPos;
     private HunterPath path;
+    private final int WALK_SPEED = 2, RUN_SPEED = 4;
     
     
     public void setPath(HunterPath hp) {
@@ -37,6 +38,15 @@ public class PathHunter extends PathObject {
     public void init() {
         pos = new Point(startPos.x * PathGrid.blockSize, startPos.y * PathGrid.blockSize);
         targetPos = (Point)pos.clone();
+        speed = 2;
+    }
+    
+    public void setRunning(boolean isRunning) {
+        if (isRunning) {
+            speed = RUN_SPEED;
+        } else {
+            speed = WALK_SPEED;
+        }
     }
     
     public void tick(PathTick pt) {
@@ -65,6 +75,14 @@ public class PathHunter extends PathObject {
         if (targetPos.y < pos.y) {
             pos.y -= speed;
         }
+        
+        //Make pixel-perfect corrections
+        if (Math.abs(targetPos.x - pos.x) < speed) {
+            pos.x = targetPos.x;
+        }
+        if (Math.abs(targetPos.y - pos.y) < speed) {
+            pos.y = targetPos.y;
+        }
     }
     
     public void draw(Graphics2D g) {
@@ -73,8 +91,12 @@ public class PathHunter extends PathObject {
         
         if (PathSettings.DEBUG_ENABLED) {
             g.setColor(Color.RED);
-            g.drawString(targetPos.toString(), pos.x, pos.y);
+            g.drawString(String.valueOf(speed), pos.x, pos.y);
         }
+    }
+    
+    public void drawGUI(Graphics2D g) {
+        
     }
     
     public void remove() {

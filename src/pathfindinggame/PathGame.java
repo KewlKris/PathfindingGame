@@ -42,8 +42,12 @@ public class PathGame {
         drawer.start();
     }
     
-    public static void draw(Graphics2D g) {
-        scenes[sceneID].draw(g);
+    public static void draw(Graphics2D objectGraphics) {
+        scenes[sceneID].draw(objectGraphics);
+    }
+    
+    public static void drawGUI(Graphics2D guiGraphics) {
+        scenes[sceneID].drawGUI(guiGraphics);
     }
     
     private static PathScene[] scenes;

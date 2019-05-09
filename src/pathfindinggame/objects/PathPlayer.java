@@ -8,7 +8,9 @@ import pathfindinggame.PathTick;
 public class PathPlayer extends PathObject {
     private Point pos;
     private Point startPos;
-    private int speed = 5;
+    private int speed = 3;
+    private double searchRadius;
+    public final int MAX_RADIUS = 800;
     
     public Point getPos() {
         return pos;
@@ -24,37 +26,41 @@ public class PathPlayer extends PathObject {
     
     public void init() {
         pos = new Point(startPos.x * PathGrid.blockSize, startPos.y * PathGrid.blockSize);
+        searchRadius = MAX_RADIUS;
     }
     
+    private final double movementPenalty = -1d;
+    private final double recoveryRate = 0.75d;
     public void tick(PathTick pt) {
         if (pt.isUpPressed()) {
             if (pos.y+PathGrid.viewOffset.y <= PathSettings.GAME_RESOLUTION.height/3) {
                 PathGrid.viewOffset.y += speed;
-            } else {
             }
             pos.y -= speed;
+            adjustSearchRadius(movementPenalty);
         }
         if (pt.isDownPressed()) {
             if (pos.y+PathGrid.viewOffset.y >= PathSettings.GAME_RESOLUTION.height - PathSettings.GAME_RESOLUTION.height/3) {
                 PathGrid.viewOffset.y -= speed;
-            } else {
             }
             pos.y += speed;
+            adjustSearchRadius(movementPenalty);
         }
         if (pt.isLeftPressed()) {
             if (pos.x+PathGrid.viewOffset.x <= PathSettings.GAME_RESOLUTION.width/4) {
                 PathGrid.viewOffset.x += speed;
-            } else {
             }
             pos.x -= speed;
+            adjustSearchRadius(movementPenalty);
         }
         if (pt.isRightPressed()) {
             if (pos.x+PathGrid.viewOffset.x >= PathSettings.GAME_RESOLUTION.width - PathSettings.GAME_RESOLUTION.width/4) {
                 PathGrid.viewOffset.x -= speed;
-            } else {
             }
             pos.x += speed;
+            adjustSearchRadius(movementPenalty);
         }
+        adjustSearchRadius(recoveryRate);
         
         //Adjust for collisions
         boolean[][] grid = PathGrid.GRID_1;
@@ -105,7 +111,28 @@ public class PathPlayer extends PathObject {
         g.fillRect(pos.x, pos.y, PathGrid.blockSize, PathGrid.blockSize);
     }
     
+    public void drawGUI(Graphics2D g) {
+        
+    }
+    
     public void remove() {
         
+    }
+    
+    public void adjustSearchRadius(double d) {
+        searchRadius += d;
+        normalizeSearchRadius();
+    }
+    
+    private void normalizeSearchRadius() {
+        if (searchRadius < 0) {
+            searchRadius = 0;
+        } else if (searchRadius > MAX_RADIUS) {
+            searchRadius = MAX_RADIUS;
+        }
+    }
+    
+    public double getSearchRadius() {
+        return searchRadius;
     }
 }

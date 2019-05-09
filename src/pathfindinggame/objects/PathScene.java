@@ -44,6 +44,13 @@ public class PathScene extends PathObject {
     }
     
     @Override
+    public void drawGUI(Graphics2D g) {
+        for (PathObject o : sceneObjects) {
+            o.drawGUI(g);
+        }
+    }
+    
+    @Override
     public void remove() {
         for (PathObject o : sceneObjects) {
             o.remove();

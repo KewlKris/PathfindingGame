@@ -17,5 +17,6 @@ public abstract class PathObject {
     abstract void init();
     abstract void tick(PathTick pt);
     abstract void draw(Graphics2D g);
+    abstract void drawGUI(Graphics2D g);
     abstract void remove();
 }

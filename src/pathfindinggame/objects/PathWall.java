@@ -34,6 +34,10 @@ public class PathWall extends PathObject {
         }
     }
     
+    public void drawGUI(Graphics2D g) {
+        
+    }
+    
     public void remove() {
         
     }
