@@ -16,6 +16,13 @@ public class PathPlayer extends PathObject {
         return pos;
     }
     
+    public Point getBlockPos() {
+        int xValue = (pos.x+PathGrid.blockSize/2) / PathGrid.blockSize;
+        int yValue = (pos.y+PathGrid.blockSize/2) / PathGrid.blockSize;
+        
+        return new Point(xValue, yValue);
+    }
+    
     /**
      * Takes the position of the player as a PathPoint
      * @param pos 

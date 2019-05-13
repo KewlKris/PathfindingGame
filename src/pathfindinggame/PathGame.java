@@ -72,6 +72,7 @@ public class PathGame {
         scene.addObject(player);
         scene.addObject(hunter);
         scene.addObject(new PathTargeter(player, hunter));
+        scene.addObject(new PathItem(player, new Point(15, 15)));
         return scene;
     }
     

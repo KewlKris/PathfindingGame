@@ -14,7 +14,8 @@ public class PathItem extends PathObject {
     
     public PathItem(PathPlayer p, Point pos)
     {
-        //finish
+        player = p;
+        position = pos;
     }
     
     public void init() {
@@ -22,11 +23,18 @@ public class PathItem extends PathObject {
     }
     
     public void tick(PathTick pt) {
-        
+        //Check for player collision
+        //System.out.println(player.getBlockPos());
+        if (player.getBlockPos().equals(position) && !isCollected) {
+            isCollected = true;
+        }
     }
     
     public void draw(Graphics2D g) {
-        
+        if (!isCollected) {
+            g.setColor(Color.YELLOW);
+            g.fillOval(position.x*PathGrid.blockSize+PathGrid.blockSize/4, position.y*PathGrid.blockSize+PathGrid.blockSize/4, PathGrid.blockSize/2, PathGrid.blockSize/2);
+        }
     }
     
     public void drawGUI(Graphics2D g) {
