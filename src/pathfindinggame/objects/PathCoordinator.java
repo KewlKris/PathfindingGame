@@ -22,7 +22,8 @@ public class PathCoordinator extends PathObject {
     }
     
     public void tick(PathTick pt) {
-        
+        levelTimer.tick(pt);
+        player.adjustMaxRadius(levelTimer.getTime()/levelTimer.getDuration());
     }
     
     public void draw(Graphics2D g) {
@@ -30,6 +31,11 @@ public class PathCoordinator extends PathObject {
     }
     
     public void drawGUI(Graphics2D g) {
+        g.setColor(Color.WHITE);
+        g.drawString(String.format("%f", levelTimer.getTime()), 500, 10);
+    }
+    
+    public void gameLost() {
         
     }
     

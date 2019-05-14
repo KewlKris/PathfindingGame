@@ -10,7 +10,21 @@ public class PathPlayer extends PathObject {
     private Point startPos;
     private int speed = 3;
     private double searchRadius;
-    public final int MAX_RADIUS = 800;
+    private final int DEFAULT_MAX_RADIUS = 800;
+    private int MAX_RADIUS;
+    
+    public int getDefaultMaxRadius() {
+        return DEFAULT_MAX_RADIUS;
+    }
+    
+    public int getMaxRadius() {
+        return MAX_RADIUS;
+    }
+    
+    public void adjustMaxRadius(float ratio) {
+        MAX_RADIUS = (int)(ratio * (float)DEFAULT_MAX_RADIUS);
+        normalizeSearchRadius();
+    }
     
     public Point getPos() {
         return pos;
@@ -33,7 +47,8 @@ public class PathPlayer extends PathObject {
     
     public void init() {
         pos = new Point(startPos.x * PathGrid.blockSize, startPos.y * PathGrid.blockSize);
-        searchRadius = MAX_RADIUS;
+        searchRadius = DEFAULT_MAX_RADIUS;
+        MAX_RADIUS = DEFAULT_MAX_RADIUS;
     }
     
     private final double movementPenalty = -1d;

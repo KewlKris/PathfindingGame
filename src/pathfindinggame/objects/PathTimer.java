@@ -60,6 +60,7 @@ public class PathTimer extends PathObject {
             if (time <= 0) {
                 timedOut = true;
                 isRunning = false;
+                time = 0;
             }
         }
     }

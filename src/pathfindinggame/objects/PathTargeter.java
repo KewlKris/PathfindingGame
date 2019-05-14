@@ -263,11 +263,20 @@ public class PathTargeter extends PathObject implements Runnable {
                 
             }
             colorBlock(g, target.x, target.y, Color.YELLOW);
-            g.setColor(Color.BLUE);
             
             //Draw searching radius
             double searchRadius = player.getSearchRadius();
             Point playerPos = player.getPos();
+            //Draw default max
+            g.setColor(Color.RED);
+            int defMaxRadius = player.getDefaultMaxRadius();
+            g.drawOval((playerPos.x+PathGrid.blockSize/2)-defMaxRadius, (playerPos.y+PathGrid.blockSize/2)-defMaxRadius, defMaxRadius*2, defMaxRadius*2);
+            //Draw max
+            g.setColor(new Color(100, 0, 0));
+            int maxRadius = player.getMaxRadius();
+            g.drawOval((playerPos.x+PathGrid.blockSize/2)-maxRadius, (playerPos.y+PathGrid.blockSize/2)-maxRadius, maxRadius*2, maxRadius*2);
+            //Draw current
+            g.setColor(Color.BLUE);
             g.drawOval((playerPos.x+PathGrid.blockSize/2)-(int)searchRadius, (playerPos.y+PathGrid.blockSize/2)-(int)searchRadius, (int)searchRadius*2, (int)searchRadius*2);
         }
     }
@@ -278,7 +287,7 @@ public class PathTargeter extends PathObject implements Runnable {
     }
     
     public void drawGUI(Graphics2D g) {
-        double alertLevel = player.getSearchRadius() / (double)player.MAX_RADIUS;
+        double alertLevel = player.getSearchRadius() / (double)player.getDefaultMaxRadius();
         Stroke stroke = new BasicStroke(2.0f);
         g.setStroke(stroke);
         g.setColor(new Color((int)((Math.abs(alertLevel-1)*255)), 0, 0));
