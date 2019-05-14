@@ -73,6 +73,7 @@ public class PathGame {
         scene.addObject(hunter);
         scene.addObject(new PathTargeter(player, hunter));
         scene.addObject(new PathItem(player, new Point(15, 15)));
+        scene.addObject(new PathTimer(1f, true));
         return scene;
     }
     
@@ -84,7 +85,7 @@ class TickTimer implements Runnable {
     public void run() {
         while (isRunning) {
             try {
-                Thread.sleep(17);
+                Thread.sleep(PathSettings.TICK_DELAY);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

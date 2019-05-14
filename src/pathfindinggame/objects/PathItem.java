@@ -18,6 +18,10 @@ public class PathItem extends PathObject {
         position = pos;
     }
     
+    public boolean getCollected() {
+        return isCollected;
+    }
+    
     public void init() {
         isCollected = false;
     }
