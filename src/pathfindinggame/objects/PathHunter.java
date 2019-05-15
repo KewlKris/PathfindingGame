@@ -93,6 +93,32 @@ public class PathHunter extends PathObject {
             g.setColor(Color.RED);
             g.drawString(String.valueOf(speed), pos.x, pos.y);
         }
+        
+        //Draw view
+        /*
+        for each ray
+            for path of ray
+                walk ray
+                test for wall
+                if not wall hit
+                    make darker
+                    draw pixel
+                else    <-- (wall hit)
+                    make solid red
+                    draw pixel
+                    break ray
+                
+        */
+        double nearWidth = 50;
+        double farWidth = 100;
+        double rayLength = 75;
+        
+        double rayRatio = nearWidth/farWidth;
+        
+        for (double farX=0; farX<farWidth; farX++) {
+            double nearX = farX*rayRatio;
+            //double xSlope = () work!
+        }
     }
     
     public void drawGUI(Graphics2D g) {
