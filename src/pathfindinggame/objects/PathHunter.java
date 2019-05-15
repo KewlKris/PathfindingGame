@@ -110,14 +110,59 @@ public class PathHunter extends PathObject {
                 
         */
         double nearWidth = 50;
-        double farWidth = 100;
+        double farWidth = 200;
         double rayLength = 75;
+        double startColor = 255;
+        double endColor = 0;
+        double colorSlope = (endColor-startColor)/rayLength;
+        double color;
         
         double rayRatio = nearWidth/farWidth;
         
-        for (double farX=0; farX<farWidth; farX++) {
+        double angle = 60;
+        double sin = Math.sin(angle);
+        double cos = Math.cos(angle);
+        
+        for (double farX=-farWidth/2; farX<farWidth/2; farX++) {
             double nearX = farX*rayRatio;
-            //double xSlope = () work!
+            
+            double destXS = (cos*nearX + -sin*rayLength); //?
+            double destXE = farX;
+            double destYS = 0;
+            double destYE = rayLength;
+            
+            
+            
+            double xSlope = (farX-nearX)/rayLength;
+            
+            double pixX = 0;
+            double pixY = 0;
+            color = startColor;
+            for (int x=0; x<rayLength; x++) {
+                pixX += xSlope;
+                pixY = x;
+                
+                //Test for block
+                int norX = (int)(Math.round(pixX)) + pos.x + PathGrid.blockSize/2;
+                int norY = (int)(Math.round(pixY)) + pos.y + PathGrid.blockSize/2;
+                int gridX = norX/PathGrid.blockSize;
+                int gridY = norY/PathGrid.blockSize;
+                if (PathGrid.GRID_1[gridY][gridX]) {
+                    //There is a collision
+                    g.setColor(Color.RED);
+                    g.drawLine(norX, norY, norX, norY);
+                    break;
+                } else {
+                    //Keep going
+                    //System.out.println(color);
+                    g.setColor(new Color((int)Math.round(color), 0, 0));
+                    color += colorSlope;
+                    if (color < 0) color = 0;
+                    g.drawLine(norX, norY, norX, norY);
+                }
+                
+            }
+            
         }
     }
     
