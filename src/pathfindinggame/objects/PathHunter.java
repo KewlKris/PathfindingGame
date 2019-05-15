@@ -14,6 +14,8 @@ public class PathHunter extends PathObject {
     private HunterPath path;
     private final int WALK_SPEED = 2, RUN_SPEED = 4;
     
+    private PathTimer lookTimer;
+    
     
     public void setPath(HunterPath hp) {
         path = hp;
@@ -39,6 +41,11 @@ public class PathHunter extends PathObject {
         pos = new Point(startPos.x * PathGrid.blockSize, startPos.y * PathGrid.blockSize);
         targetPos = (Point)pos.clone();
         speed = 2;
+        viewAngle = 90;
+        lookingOffset = 0;
+        
+        lookTimer = new PathTimer(0.2f, true);
+        lookTimer.init();
     }
     
     public void setRunning(boolean isRunning) {
@@ -50,6 +57,12 @@ public class PathHunter extends PathObject {
     }
     
     public void tick(PathTick pt) {
+        //Adjust view
+        if (lookTimer.getTimedOut()) {
+            lookingOffset = Math.random()*10 - 5;
+            lookTimer.reset();
+        }
+        
         if (pos.equals(targetPos)) {
             Point t;
             try {
@@ -65,15 +78,19 @@ public class PathHunter extends PathObject {
         
         if (targetPos.x > pos.x) {
             pos.x += speed;
+            viewAngle = 270;
         }
         if (targetPos.x < pos.x) {
             pos.x -= speed;
+            viewAngle = 90;
         }
         if (targetPos.y > pos.y) {
             pos.y += speed;
+            viewAngle = 180;
         }
         if (targetPos.y < pos.y) {
             pos.y -= speed;
+            viewAngle = 0;
         }
         
         //Make pixel-perfect corrections
@@ -85,7 +102,10 @@ public class PathHunter extends PathObject {
         }
     }
     
+    private double viewAngle;
+    private double lookingOffset;
     public void draw(Graphics2D g) {
+        drawRays(g);
         g.setColor(new Color(120, 0, 0));
         g.fillRect(pos.x, pos.y, PathGrid.blockSize, PathGrid.blockSize);
         
@@ -93,7 +113,51 @@ public class PathHunter extends PathObject {
             g.setColor(Color.RED);
             g.drawString(String.valueOf(speed), pos.x, pos.y);
         }
+    }
+    
+    double farWidth = 200;
+    double rayLength = 125;
+    private boolean testRays() {
+        int collisionCount = 0;
+        double angle = ((viewAngle + lookingOffset)/180d) * Math.PI;
+        double sin = Math.sin(angle);
+        double cos = Math.cos(angle);
         
+        for (double farX=-farWidth/2; farX<farWidth/2; farX++) {
+            
+            double destXS = 0;
+            double destXE = (cos*farX + (-sin)*rayLength);
+            double destYS = 0;
+            double destYE = (sin*farX + cos*rayLength);
+            
+            
+            
+            double xSlope = (destXE-destXS)/rayLength;
+            double ySlope = (0-destYE)/rayLength;
+            
+            double pixX = 0;
+            double pixY = 0;
+            for (int x=0; x<rayLength; x++) {
+                pixX += xSlope;
+                pixY += ySlope;
+                
+                //Test for block
+                int norX = (int)(Math.round(pixX)) + pos.x + PathGrid.blockSize/2;
+                int norY = (int)(Math.round(pixY)) + pos.y + PathGrid.blockSize/2;
+                int gridX = norX/PathGrid.blockSize;
+                int gridY = norY/PathGrid.blockSize;
+                if (PathGrid.GRID_1[gridY][gridX]) { //Adjust to test for player intersection
+                    //There is a collision
+                    collisionCount++;
+                    break;
+                }
+                //Keep going 
+            }
+            
+        }
+    }
+    
+    private void drawRays(Graphics2D g) {
         //Draw view
         /*
         for each ray
@@ -109,38 +173,33 @@ public class PathHunter extends PathObject {
                     break ray
                 
         */
-        double nearWidth = 50;
-        double farWidth = 200;
-        double rayLength = 75;
         double startColor = 255;
         double endColor = 0;
         double colorSlope = (endColor-startColor)/rayLength;
         double color;
         
-        double rayRatio = nearWidth/farWidth;
-        
-        double angle = 60;
+        double angle = ((viewAngle + lookingOffset)/180d) * Math.PI;
         double sin = Math.sin(angle);
         double cos = Math.cos(angle);
         
         for (double farX=-farWidth/2; farX<farWidth/2; farX++) {
-            double nearX = farX*rayRatio;
             
-            double destXS = (cos*nearX + -sin*rayLength); //?
-            double destXE = farX;
+            double destXS = 0;
+            double destXE = (cos*farX + (-sin)*rayLength);
             double destYS = 0;
-            double destYE = rayLength;
+            double destYE = (sin*farX + cos*rayLength);
             
             
             
-            double xSlope = (farX-nearX)/rayLength;
+            double xSlope = (destXE-destXS)/rayLength;
+            double ySlope = (0-destYE)/rayLength;
             
             double pixX = 0;
             double pixY = 0;
             color = startColor;
             for (int x=0; x<rayLength; x++) {
                 pixX += xSlope;
-                pixY = x;
+                pixY += ySlope;
                 
                 //Test for block
                 int norX = (int)(Math.round(pixX)) + pos.x + PathGrid.blockSize/2;
@@ -149,13 +208,13 @@ public class PathHunter extends PathObject {
                 int gridY = norY/PathGrid.blockSize;
                 if (PathGrid.GRID_1[gridY][gridX]) {
                     //There is a collision
-                    g.setColor(Color.RED);
+                    g.setPaint(Color.RED);
                     g.drawLine(norX, norY, norX, norY);
                     break;
                 } else {
                     //Keep going
                     //System.out.println(color);
-                    g.setColor(new Color((int)Math.round(color), 0, 0));
+                    g.setPaint(new Color((int)Math.round(color), 0, 0));
                     color += colorSlope;
                     if (color < 0) color = 0;
                     g.drawLine(norX, norY, norX, norY);
