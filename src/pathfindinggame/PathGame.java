@@ -14,6 +14,7 @@ public class PathGame {
     public static void changeScene(int id) {
         scenes[sceneID].remove();
         sceneID = id;
+        PathGrid.viewOffset = new Point(0, 0);
         scenes[sceneID].init();
     }
     
@@ -54,11 +55,20 @@ public class PathGame {
     private static PathScene[] scenes;
     private static int sceneID;
     public static final int MAIN_MENU = 0;
+    public static final int LEVEL = 1;
     private static void initializeScenes() {
-        scenes = new PathScene[] {initMainMenu()};
+        scenes = new PathScene[] {initMainMenu(), initLevel()};
     }
     
     private static PathScene initMainMenu() {
+        //PathScene scene = new PathScene(new Dimension(500, 500));
+        PathScene scene = new PathScene(new Dimension(40, 23));
+        
+        scene.addObject(new PathButtonPlay(new Point(100, 100), new Dimension(300, 200)));
+        return scene;
+    }
+    
+    private static PathScene initLevel() {
         PathScene scene = new PathScene(new Dimension(PathGrid.getGrid()[0].length, PathGrid.getGrid().length));
         
         for (int y=0; y<PathGrid.getGrid().length; y++) {
