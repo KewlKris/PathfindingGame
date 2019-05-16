@@ -6,7 +6,7 @@ public class PathGrid {
     public static final int blockSize = 32;
     public static Point viewOffset = new Point(0, 0);
     
-    public static final int GRID_ONE = 1;
+    public static final int GRID_ONE = 0;
     
     private static int gridID = GRID_ONE;
     private static final boolean[][] GRID_1 = new boolean[50][50];

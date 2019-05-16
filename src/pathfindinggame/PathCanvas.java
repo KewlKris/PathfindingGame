@@ -1,8 +1,7 @@
 package pathfindinggame;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 
 public class PathCanvas extends Canvas {
     
@@ -11,10 +10,20 @@ public class PathCanvas extends Canvas {
     public static boolean leftPressed = false;
     public static boolean rightPressed = false;
     
+    public static boolean leftMousePressed = false;
+    public static boolean rightMousePressed = false;
+    public static int mouseX = 0;
+    public static int mouseY = 0;
+    
     private Image frameBuffer;
     private Graphics2D buf;
     public PathCanvas() {
         this.addKeyListener(new KeyboardPressListener());
+        this.addMouseListener(new MousePressedListener());
+        this.addMouseMotionListener(new MouseMovedListener());
+        
+        //this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        
         this.setBackground(Color.BLACK);
     }
     
@@ -99,6 +108,53 @@ public class PathCanvas extends Canvas {
         }
         
         public void keyTyped(KeyEvent e) {
+            
+        }
+    }
+    
+    private class MousePressedListener implements MouseListener {
+        public void mouseExited(MouseEvent e) {
+            
+        }
+        
+        public void mouseEntered(MouseEvent e) {
+            
+        }
+        
+        public void mouseReleased(MouseEvent e) {
+            switch (e.getButton()) {
+                case MouseEvent.BUTTON1:
+                    leftMousePressed = false;
+                    break;
+                case MouseEvent.BUTTON2:
+                    rightMousePressed = false;
+                    break;
+            }
+        }
+        
+        public void mousePressed(MouseEvent e) {
+            switch (e.getButton()) {
+                case MouseEvent.BUTTON1:
+                    leftMousePressed = true;
+                    break;
+                case MouseEvent.BUTTON2:
+                    rightMousePressed = true;
+                    break;
+            }
+        }
+        
+        public void mouseClicked(MouseEvent e) {
+            
+        }
+    }
+    
+    private class MouseMovedListener implements MouseMotionListener {
+        public void mouseMoved(MouseEvent e) {
+            mouseX = e.getX();
+            mouseY = e.getY();
+        }
+        
+        public void mouseDragged(MouseEvent e) {
             
         }
     }

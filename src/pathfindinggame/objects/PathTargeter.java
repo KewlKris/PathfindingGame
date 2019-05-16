@@ -25,6 +25,7 @@ public class PathTargeter extends PathObject implements Runnable {
         Point hunterPos = hunter.getPos();
         target = new Point(hunterPos.x/PathGrid.blockSize, hunterPos.y/PathGrid.blockSize);
         isBusy = false;
+        removing = false;
     }
     
     public void tick(PathTick pt) {
@@ -93,6 +94,7 @@ public class PathTargeter extends PathObject implements Runnable {
     
     int pathUpdateDelay = 1;
     int count = 0;
+    private boolean removing = false;
     public void run() {
         if (count != pathUpdateDelay) {
             count++;
@@ -214,7 +216,9 @@ public class PathTargeter extends PathObject implements Runnable {
             }
         }
         //System.out.println(closedList.size());
-        hunter.setPath(new HunterPath(destNode));
+        if (!removing) {
+            hunter.setPath(new HunterPath(destNode));
+        }
         isBusy = false;
     }
     
@@ -296,7 +300,8 @@ public class PathTargeter extends PathObject implements Runnable {
     }
     
     public void remove() {
-        
+        removing = true;
+        destNode = null;
     }
 }
 

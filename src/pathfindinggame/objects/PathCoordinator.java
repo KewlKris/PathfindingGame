@@ -4,6 +4,7 @@ import java.awt.*;
 import pathfindinggame.PathGrid;
 import pathfindinggame.PathTick;
 import java.text.DecimalFormat;
+import pathfindinggame.PathGame;
 
 public class PathCoordinator extends PathObject {
     private PathPlayer player;
@@ -25,6 +26,9 @@ public class PathCoordinator extends PathObject {
     public void tick(PathTick pt) {
         levelTimer.tick(pt);
         player.adjustMaxRadius(levelTimer.getTime()/levelTimer.getDuration());
+        if (player.getBlockPos().equals(hunter.getBlockPos())) {
+            PathGame.changeScene(PathGame.MAIN_MENU);
+        }
     }
     
     public void draw(Graphics2D g) {

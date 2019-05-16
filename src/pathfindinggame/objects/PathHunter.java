@@ -26,6 +26,13 @@ public class PathHunter extends PathObject {
         targetPos = PathGrid.toCoord(tPos.x, tPos.y);
     }
     
+    public Point getBlockPos() {
+        int xValue = (pos.x+PathGrid.blockSize/2) / PathGrid.blockSize;
+        int yValue = (pos.y+PathGrid.blockSize/2) / PathGrid.blockSize;
+        
+        return new Point(xValue, yValue);
+    }
+    
     /**
      * Takes the position of the player as a PathPoint
      * @param pos 
@@ -246,6 +253,6 @@ public class PathHunter extends PathObject {
     }
     
     public void remove() {
-        
+        path = null;
     }
 }

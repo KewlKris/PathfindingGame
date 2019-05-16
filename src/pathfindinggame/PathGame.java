@@ -12,6 +12,7 @@ public class PathGame {
     }
     
     public static void changeScene(int id) {
+        scenes[sceneID].remove();
         sceneID = id;
         scenes[sceneID].init();
     }
@@ -76,8 +77,6 @@ public class PathGame {
         scene.addObject(new PathCoordinator(player, hunter, null, 300f));
         return scene;
     }
-    
-    
 }
 
 class TickTimer implements Runnable {
@@ -89,7 +88,8 @@ class TickTimer implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            PathGame.tick(new PathTick(PathCanvas.upPressed, PathCanvas.downPressed, PathCanvas.leftPressed, PathCanvas.rightPressed));
+            PathGame.tick(new PathTick(PathCanvas.upPressed, PathCanvas.downPressed, PathCanvas.leftPressed, PathCanvas.rightPressed,
+                                       PathCanvas.leftMousePressed, PathCanvas.rightMousePressed, PathCanvas.mouseX, PathCanvas.mouseY));
         }
     }
 }
