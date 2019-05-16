@@ -23,6 +23,7 @@ public class PathGame {
     }
     
     public static void startGame() {
+        PathResources.loadResources();
         PathGrid.fillGrids();
         initializeScenes();
         changeScene(MAIN_MENU);
@@ -56,15 +57,29 @@ public class PathGame {
     private static int sceneID;
     public static final int MAIN_MENU = 0;
     public static final int LEVEL = 1;
+    public static final int HOW = 2;
     private static void initializeScenes() {
-        scenes = new PathScene[] {initMainMenu(), initLevel()};
+        scenes = new PathScene[] {initMainMenu(), initLevel(), initHow()};
     }
     
     private static PathScene initMainMenu() {
-        //PathScene scene = new PathScene(new Dimension(500, 500));
-        PathScene scene = new PathScene(new Dimension(40, 23));
+        PathScene scene = new PathScene(new Dimension(40, 23)); //Roughly 1280 x 720
         
-        scene.addObject(new PathButtonPlay(new Point(100, 100), new Dimension(300, 200)));
+        scene.addObject(new PathSprite(new Point(0, 0), PathResources.MENU_BACKGROUND));
+        scene.addObject(new PathButtonPlay(new Point(75, 250), new Dimension(153, 50), 40));
+        scene.addObject(new PathButtonHow(new Point(75, 330), new Dimension(420, 50), 40));
+        scene.addObject(new PathButtonExit(new Point(75, 410), new Dimension(155, 50), 40));
+        scene.addObject(new PathMainMenuText());
+        return scene;
+    }
+    
+    private static PathScene initHow() {
+        PathScene scene = new PathScene(new Dimension(40, 23)); //Roughly 1280 x 720
+        
+        scene.addObject(new PathSprite(new Point(0, 0), PathResources.MENU_BACKGROUND));
+        scene.addObject(new PathSprite(new Point(0, 0), PathResources.HOW_TO));
+        scene.addObject(new PathButtonBack(new Point(550, 680), new Dimension(150, 50), 40));
+        
         return scene;
     }
     
@@ -77,7 +92,7 @@ public class PathGame {
             }
         }
         
-        PathPlayer player = new PathPlayer(new Point(5, 5));
+        PathPlayer player = new PathPlayer(new Point(35, 21));
         PathHunter hunter = new PathHunter(new Point(10, 10), player);
         
         scene.addObject(player);

@@ -21,6 +21,7 @@ public class PathCoordinator extends PathObject {
     
     public void init() {
         levelTimer.init();
+        PathGrid.viewOffset = new Point(-500, -300);
     }
     
     public void tick(PathTick pt) {

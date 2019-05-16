@@ -2,16 +2,19 @@ package pathfindinggame.objects;
 
 import java.awt.*;
 import pathfindinggame.PathGrid;
+import pathfindinggame.PathSettings;
 import pathfindinggame.PathTick;
 
 public class PathButton extends PathObject {
-    private Point pos;
-    private Dimension dim;
-    private boolean isHovering;
-    public PathButton(Point p, Dimension d)
+    protected Point pos;
+    protected Dimension dim;
+    protected boolean isHovering;
+    private int verticalOffset;
+    public PathButton(Point p, Dimension d, int v)
     {
         pos = p;
         dim = d;
+        verticalOffset = v;
     }
     
     public void init() {
@@ -24,8 +27,8 @@ public class PathButton extends PathObject {
         isHovering = (
                 x >= pos.x &&
                 x < pos.x + dim.width &&
-                y >= pos.y &&
-                y < pos.y + dim.height);
+                y >= pos.y-verticalOffset &&
+                y < pos.y + dim.height - verticalOffset);
         
         if (isHovering && pt.isLeftMousePressed()) {
             action();
@@ -37,14 +40,10 @@ public class PathButton extends PathObject {
     }
     
     public void draw(Graphics2D g) {
-        Color color;
-        if (!isHovering) {
-            color = new Color(100, 100, 255);
-        } else {
-            color = new Color(150, 150, 255);
+        if (PathSettings.DEBUG_ENABLED) {
+            g.setColor(Color.cyan);
+            g.drawRect(pos.x, pos.y-verticalOffset, dim.width, dim.height);
         }
-        g.setColor(color);
-        g.fillRect(pos.x, pos.y, dim.width, dim.height);
     }
     
     public void drawGUI(Graphics2D g) {

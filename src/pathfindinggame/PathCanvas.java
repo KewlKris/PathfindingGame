@@ -49,7 +49,7 @@ public class PathCanvas extends Canvas {
         Image guiBuffer = createImage(PathSettings.GAME_RESOLUTION.width, PathSettings.GAME_RESOLUTION.height);
         Graphics2D GUIGraph = (Graphics2D)guiBuffer.getGraphics();
         
-        sceneGraph.setColor(Color.LIGHT_GRAY);
+        sceneGraph.setColor(new Color(230, 230, 230));
         sceneGraph.fillRect(0, 0, sceneDim.width*PathGrid.blockSize, sceneDim.height*PathGrid.blockSize);
         
         PathGame.draw(sceneGraph);
@@ -57,17 +57,19 @@ public class PathCanvas extends Canvas {
         buf.drawImage(sceneBuffer, PathGrid.viewOffset.x, PathGrid.viewOffset.y, this);
         PathGame.drawGUI(buf);
         
-        int wDif = this.getWidth() - PathSettings.GAME_RESOLUTION.width;
-        int hDif = this.getHeight() - PathSettings.GAME_RESOLUTION.height;
-        
-        double scale;
-        if (wDif < hDif) {
-            scale = (double)this.getWidth() / (double)PathSettings.GAME_RESOLUTION.width;
-        } else {
-            scale = (double)this.getHeight() / (double)PathSettings.GAME_RESOLUTION.height;
+        /*
+        if (this.getWidth() >= this.getHeight()) {
+            //Scale vertically place horizontally
+            double scale = (double)this.getHeight()/(double)PathSettings.GAME_RESOLUTION.height;
+            graph.scale(scale, scale);
+            graph.drawImage(frameBuffer, (this.getWidth()/2-PathSettings.GAME_RESOLUTION.width)/2, 0, this);
         }
+        */
         
-        //graph.scale(scale, scale);
+        double scaleW = (double)this.getWidth()/(double)PathSettings.GAME_RESOLUTION.width;
+        double scaleH = (double)this.getHeight()/(double)PathSettings.GAME_RESOLUTION.height;
+        
+        graph.scale(scaleW, scaleH);
         graph.drawImage(frameBuffer, 0, 0, this);
         //graph.drawImage(frameBuffer, (this.getWidth()-PathSettings.GAME_RESOLUTION.width)/2, 0, this);
     }

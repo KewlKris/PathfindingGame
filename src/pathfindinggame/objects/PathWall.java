@@ -21,7 +21,7 @@ public class PathWall extends PathObject {
     }
     
     public void draw(Graphics2D g) {
-        g.setColor(Color.DARK_GRAY);
+        g.setColor(Color.BLACK);
         Point coordPoint = PathGrid.toCoord(blockPos.x, blockPos.y);
         g.fillRect(coordPoint.x, coordPoint.y, PathGrid.blockSize, PathGrid.blockSize);
         

@@ -9,7 +9,7 @@ public class PathGrid {
     public static final int GRID_ONE = 0;
     
     private static int gridID = GRID_ONE;
-    private static final boolean[][] GRID_1 = new boolean[50][50];
+    private static final boolean[][] GRID_1 = new boolean[50][80];
     
     private static boolean[][][] GRIDS = new boolean[][][] {GRID_1};
     
@@ -22,13 +22,10 @@ public class PathGrid {
     }
     
     public static void fillGrids() {
-        for (int y=0; y<GRID_1.length; y++) {
-            for (int x=0; x<GRID_1[y].length; x++) {
-                if (x==0 || y == 0 || x == (GRID_1[y].length-1) || y == (GRID_1.length-1)) {
-                    GRID_1[y][x] = true;
-                    continue;
-                }
-                if (((int)(Math.random() * 5)) == 0) {
+        for (int y=0; y<50; y++) {
+            for (int x=0; x<80; x++) {
+                //System.out.println(x + " " + y);
+                if (PathResources.MAP.getRGB(x, y) != 0xFF_FF_FF_FF) {
                     GRID_1[y][x] = true;
                 }
             }

@@ -3,13 +3,13 @@ package pathfindinggame.objects;
 import java.awt.*;
 import pathfindinggame.PathGame;
 
-public class PathButtonPlay extends PathButton {
-    public PathButtonPlay(Point p, Dimension d, int v) {
+public class PathButtonBack extends PathButton {
+    public PathButtonBack(Point p, Dimension d, int v) {
         super(p, d, v);
     }
     
     public void action() {
-        PathGame.changeScene(PathGame.LEVEL);
+        PathGame.changeScene(PathGame.MAIN_MENU);
     }
     
     public void draw(Graphics2D g) {
@@ -23,6 +23,6 @@ public class PathButtonPlay extends PathButton {
         g.setColor(color);
         Font font = new Font("monospaced", Font.BOLD, 64);
         g.setFont(font);
-        g.drawString("Play", pos.x, pos.y);
+        g.drawString("Back", pos.x, pos.y);
     }
 }
