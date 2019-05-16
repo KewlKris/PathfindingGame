@@ -58,16 +58,16 @@ public class PathGame {
     }
     
     private static PathScene initMainMenu() {
-        PathScene scene = new PathScene(new Dimension(PathGrid.GRID_1[0].length, PathGrid.GRID_1.length));
+        PathScene scene = new PathScene(new Dimension(PathGrid.getGrid()[0].length, PathGrid.getGrid().length));
         
-        for (int y=0; y<PathGrid.GRID_1.length; y++) {
-            for (int x=0; x<PathGrid.GRID_1[y].length; x++) {
-                if (PathGrid.GRID_1[y][x]) scene.addObject(new PathWall(new Point(x, y)));
+        for (int y=0; y<PathGrid.getGrid().length; y++) {
+            for (int x=0; x<PathGrid.getGrid()[y].length; x++) {
+                if (PathGrid.getGrid()[y][x]) scene.addObject(new PathWall(new Point(x, y)));
             }
         }
         
         PathPlayer player = new PathPlayer(new Point(5, 5));
-        PathHunter hunter = new PathHunter(new Point(10, 10));
+        PathHunter hunter = new PathHunter(new Point(10, 10), player);
         
         scene.addObject(player);
         scene.addObject(hunter);

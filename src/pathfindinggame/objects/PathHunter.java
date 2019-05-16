@@ -15,6 +15,7 @@ public class PathHunter extends PathObject {
     private final int WALK_SPEED = 2, RUN_SPEED = 4;
     
     private PathTimer lookTimer;
+    private PathPlayer player;
     
     
     public void setPath(HunterPath hp) {
@@ -29,8 +30,9 @@ public class PathHunter extends PathObject {
      * Takes the position of the player as a PathPoint
      * @param pos 
      */
-    public PathHunter(Point pos) {
+    public PathHunter(Point pos, PathPlayer p) {
         startPos = pos;
+        player = p;
     }
     
     public Point getPos() {
@@ -61,6 +63,10 @@ public class PathHunter extends PathObject {
         if (lookTimer.getTimedOut()) {
             lookingOffset = Math.random()*10 - 5;
             lookTimer.reset();
+        }
+        
+        if (testRays()) {
+            player.adjustSearchRadius(-10);
         }
         
         if (pos.equals(targetPos)) {
@@ -100,6 +106,7 @@ public class PathHunter extends PathObject {
         if (Math.abs(targetPos.y - pos.y) < speed) {
             pos.y = targetPos.y;
         }
+        
     }
     
     private double viewAngle;
@@ -146,7 +153,12 @@ public class PathHunter extends PathObject {
                 int norY = (int)(Math.round(pixY)) + pos.y + PathGrid.blockSize/2;
                 int gridX = norX/PathGrid.blockSize;
                 int gridY = norY/PathGrid.blockSize;
-                if (PathGrid.GRID_1[gridY][gridX]) { //Adjust to test for player intersection
+                if (PathGrid.getGrid()[gridY][gridX]) {
+                    //There is a collision
+                    break;
+                }
+                Point playerPos = player.getPos();
+                if (norX >= playerPos.x && norX < playerPos.x+player.getSize() && norY >= playerPos.y && norY < playerPos.y+player.getSize()) { //Adjust to test for player intersection
                     //There is a collision
                     collisionCount++;
                     break;
@@ -155,6 +167,10 @@ public class PathHunter extends PathObject {
             }
             
         }
+        if (collisionCount > 5) {
+            return true;
+        }
+        return false;
     }
     
     private void drawRays(Graphics2D g) {
@@ -206,7 +222,7 @@ public class PathHunter extends PathObject {
                 int norY = (int)(Math.round(pixY)) + pos.y + PathGrid.blockSize/2;
                 int gridX = norX/PathGrid.blockSize;
                 int gridY = norY/PathGrid.blockSize;
-                if (PathGrid.GRID_1[gridY][gridX]) {
+                if (PathGrid.getGrid()[gridY][gridX]) {
                     //There is a collision
                     g.setPaint(Color.RED);
                     g.drawLine(norX, norY, norX, norY);

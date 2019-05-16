@@ -8,4 +8,6 @@ public class PathSettings {
     public static final boolean DEBUG_ENABLED = false;
     
     public static final int TICK_DELAY = 17;
+    
+    public static final int ALERT_RADIUS = 200;
 }

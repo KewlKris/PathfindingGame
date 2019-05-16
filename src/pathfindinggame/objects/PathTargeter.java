@@ -31,7 +31,7 @@ public class PathTargeter extends PathObject implements Runnable {
         Point playerPos = player.getPos();
         //target = new Point((int)(Math.round((playerPos.x + PathGrid.blockSize/2) / PathGrid.blockSize)), (int)(Math.round((playerPos.y + PathGrid.blockSize/2) / PathGrid.blockSize)));
         //hunter.setTarget(target);
-        hunter.setRunning(player.getSearchRadius() < 200);
+        hunter.setRunning(player.getSearchRadius() < PathSettings.ALERT_RADIUS);
         assignTarget();
         Thread t = new Thread(this);
         t.start();
@@ -80,7 +80,7 @@ public class PathTargeter extends PathObject implements Runnable {
                 blockX = ((int)(Math.round(posX + dispX))) / PathGrid.blockSize;
                 blockY = ((int)(Math.round(posY + dispY))) / PathGrid.blockSize;
                 
-                if (PathGrid.GRID_1[blockY][blockX]) {
+                if (PathGrid.getGrid()[blockY][blockX]) {
                     continue;
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
@@ -155,7 +155,7 @@ public class PathTargeter extends PathObject implements Runnable {
             TraceStep lowestF = openList.remove(0);
             ArrayList<TraceStep> successors = new ArrayList<TraceStep>();
             
-            boolean[][] grid = PathGrid.GRID_1;
+            boolean[][] grid = PathGrid.getGrid();
             if (!grid[lowestF.y-1][lowestF.x]) { //If empty
                 TraceStep suc = new TraceStep(lowestF, lowestF.g + 1, findH(lowestF.x, lowestF.y - 1), lowestF.x, lowestF.y - 1);
                 successors.add(suc);

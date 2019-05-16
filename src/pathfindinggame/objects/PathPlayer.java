@@ -12,6 +12,11 @@ public class PathPlayer extends PathObject {
     private double searchRadius;
     private final int DEFAULT_MAX_RADIUS = 800;
     private int MAX_RADIUS;
+    private int size = 32;
+    
+    public int getSize() {
+        return size;
+    }
     
     public int getDefaultMaxRadius() {
         return DEFAULT_MAX_RADIUS;
@@ -31,8 +36,8 @@ public class PathPlayer extends PathObject {
     }
     
     public Point getBlockPos() {
-        int xValue = (pos.x+PathGrid.blockSize/2) / PathGrid.blockSize;
-        int yValue = (pos.y+PathGrid.blockSize/2) / PathGrid.blockSize;
+        int xValue = (pos.x+size/2) / PathGrid.blockSize;
+        int yValue = (pos.y+size/2) / PathGrid.blockSize;
         
         return new Point(xValue, yValue);
     }
@@ -85,7 +90,7 @@ public class PathPlayer extends PathObject {
         adjustSearchRadius(recoveryRate);
         
         //Adjust for collisions
-        boolean[][] grid = PathGrid.GRID_1;
+        boolean[][] grid = PathGrid.getGrid();
         for (int y=0; y<grid.length; y++) {
             for (int x=0; x<grid[y].length; x++) {
                 if (grid[y][x]) {
@@ -95,9 +100,9 @@ public class PathPlayer extends PathObject {
                     int bEndY = y * PathGrid.blockSize + PathGrid.blockSize;
 
                     int pStartX = pos.x;
-                    int pEndX = pos.x + PathGrid.blockSize;
+                    int pEndX = pos.x + size;
                     int pStartY = pos.y;
-                    int pEndY = pos.y + PathGrid.blockSize;
+                    int pEndY = pos.y + size;
 
                     boolean isAbove = pStartY < bStartY;
                     boolean isLeft = pStartX < bStartX;
@@ -130,7 +135,7 @@ public class PathPlayer extends PathObject {
     
     public void draw(Graphics2D g) {
         g.setColor(Color.BLUE);
-        g.fillRect(pos.x, pos.y, PathGrid.blockSize, PathGrid.blockSize);
+        g.fillRect(pos.x, pos.y, size, size);
     }
     
     public void drawGUI(Graphics2D g) {
